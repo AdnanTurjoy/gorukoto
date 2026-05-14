@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,6 +53,7 @@ export default function AddMarketPage() {
   const geo = useGeolocation(true);
   const initialCenter = geo.lat && geo.lng ? { lat: geo.lat, lng: geo.lng } : DHAKA_CENTER;
   const [point, setPoint] = useState<{ lat: number; lng: number } | null>(null);
+  const [geocoding, setGeocoding] = useState(false);
   const create = useCreateMarket();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -66,6 +67,40 @@ export default function AddMarketPage() {
       division: 'Dhaka',
     },
   });
+
+  useEffect(() => {
+    if (!point) return;
+    let cancelled = false;
+    setGeocoding(true);
+    fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${point.lat}&lon=${point.lng}&accept-language=en`,
+    )
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        const addr = data.address ?? {};
+
+        const area =
+          addr.suburb ?? addr.village ?? addr.town ?? addr.city_district ?? addr.city ?? '';
+
+        const rawDistrict = addr.county ?? addr.city ?? '';
+        const district = rawDistrict.replace(/\s*(District|Zila|Jila)\s*/i, '').trim();
+
+        const rawState = addr.state ?? '';
+        const stateName = rawState.replace(/\s*Division\s*/i, '').trim();
+        const division = DIVISIONS.find(
+          (d) => d.toLowerCase() === stateName.toLowerCase(),
+        ) ?? '';
+
+        if (area)     setValue('area',     area,     { shouldValidate: true });
+        if (district) setValue('district', district, { shouldValidate: true });
+        if (division) setValue('division', division, { shouldValidate: true });
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setGeocoding(false); });
+
+    return () => { cancelled = true; };
+  }, [point]);
 
   const onSubmit = handleSubmit(async (values) => {
     if (!point) {
@@ -121,19 +156,29 @@ export default function AddMarketPage() {
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <Label>এলাকা</Label>
-            <Input {...register('area')} placeholder="Gabtoli" />
+            <Label className="flex items-center gap-1.5">
+              এলাকা
+              {geocoding && <span className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-primary border-t-transparent" />}
+            </Label>
+            <Input {...register('area')} placeholder="Gabtoli" disabled={geocoding} />
           </div>
           <div>
-            <Label>জেলা</Label>
-            <Input {...register('district')} placeholder="Dhaka" />
+            <Label className="flex items-center gap-1.5">
+              জেলা
+              {geocoding && <span className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-primary border-t-transparent" />}
+            </Label>
+            <Input {...register('district')} placeholder="Dhaka" disabled={geocoding} />
           </div>
         </div>
         <div>
-          <Label>বিভাগ</Label>
+          <Label className="flex items-center gap-1.5">
+            বিভাগ
+            {geocoding && <span className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-primary border-t-transparent" />}
+          </Label>
           <Select
             value={watch('division')}
             onValueChange={(v) => setValue('division', v, { shouldValidate: true })}
+            disabled={geocoding}
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
