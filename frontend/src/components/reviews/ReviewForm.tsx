@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -38,39 +39,55 @@ export function ReviewForm({ marketId }: { marketId: string }) {
       toast({ title: 'রিভিউ পোস্ট হয়েছে' });
       reset();
     } catch (err) {
-      toast({ title: 'পোস্ট করতে সমস্যা হয়েছে', description: apiErrorMessage(err), variant: 'destructive' });
+      toast({
+        title: 'পোস্ট করতে সমস্যা হয়েছে',
+        description: apiErrorMessage(err),
+        variant: 'destructive',
+      });
     }
   });
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 rounded-lg border p-4">
-      <h3 className="font-semibold">রিভিউ দিন</h3>
-      <div className="grid gap-2">
-        <Label>দাম কেমন?</Label>
-        <Select
-          value={watch('priceTag')}
-          onValueChange={(v) => setValue('priceTag', v as PriceLevel, { shouldValidate: true })}
-        >
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="CHEAP">{PRICE_LEVEL_LABEL.CHEAP}</SelectItem>
-            <SelectItem value="FAIR">{PRICE_LEVEL_LABEL.FAIR}</SelectItem>
-            <SelectItem value="EXPENSIVE">{PRICE_LEVEL_LABEL.EXPENSIVE}</SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+      <div className="flex items-center gap-2 border-b bg-muted/20 px-5 py-3.5">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
+          <Star className="h-3.5 w-3.5 text-primary" />
+        </span>
+        <h3 className="text-sm font-bold">রিভিউ দিন</h3>
       </div>
 
-      <div className="grid gap-2">
-        <Label>মন্তব্য</Label>
-        <Textarea placeholder="আপনার অভিজ্ঞতা লিখুন…" {...register('comment')} />
-        {formState.errors.comment && (
-          <p className="text-xs text-destructive">{formState.errors.comment.message}</p>
-        )}
-      </div>
+      <form onSubmit={onSubmit} className="space-y-4 p-5">
+        <div className="space-y-1.5">
+          <Label>দাম কেমন মনে হলো?</Label>
+          <Select
+            value={watch('priceTag')}
+            onValueChange={(v) => setValue('priceTag', v as PriceLevel, { shouldValidate: true })}
+          >
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="CHEAP">{PRICE_LEVEL_LABEL.CHEAP}</SelectItem>
+              <SelectItem value="FAIR">{PRICE_LEVEL_LABEL.FAIR}</SelectItem>
+              <SelectItem value="EXPENSIVE">{PRICE_LEVEL_LABEL.EXPENSIVE}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      <Button type="submit" disabled={create.isPending} className="w-full">
-        {create.isPending ? 'পোস্ট হচ্ছে…' : 'রিভিউ পোস্ট করুন'}
-      </Button>
-    </form>
+        <div className="space-y-1.5">
+          <Label>মন্তব্য</Label>
+          <Textarea
+            rows={3}
+            placeholder="আপনার অভিজ্ঞতা লিখুন…"
+            {...register('comment')}
+          />
+          {formState.errors.comment && (
+            <p className="text-xs text-destructive">{formState.errors.comment.message}</p>
+          )}
+        </div>
+
+        <Button type="submit" disabled={create.isPending} className="w-full">
+          {create.isPending ? 'পোস্ট হচ্ছে…' : 'রিভিউ পোস্ট করুন'}
+        </Button>
+      </form>
+    </div>
   );
 }

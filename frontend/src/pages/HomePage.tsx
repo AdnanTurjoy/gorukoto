@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { GoruKoiLogo } from '@/components/ui/GoruKoiLogo';
 import { MarketCard } from '@/components/markets/MarketCard';
 import { MarketFilters } from '@/components/markets/MarketFilters';
 import { GoruKinchenDialog } from '@/components/markets/GoruKinchenDialog';
@@ -117,6 +118,18 @@ export default function HomePage() {
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400"/>
                 ঈদ-উল-আযহা ২০২৬ · কমিউনিটি দ্বারা পরিচালিত
               </span>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="flex items-center gap-3">
+              <GoruKoiLogo size={52} />
+              <div>
+                <div className="font-display text-xl font-black text-white leading-tight tracking-tight">
+                  গরুকই
+                </div>
+                <div className="text-xs font-medium text-white/40 tracking-widest uppercase">
+                  GoruKoi
+                </div>
+              </div>
             </motion.div>
 
             <motion.h1

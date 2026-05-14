@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Camera } from 'lucide-react';
+import { Camera, ShoppingBag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -69,81 +69,97 @@ export function PurchaseForm({ marketId }: { marketId: string }) {
   });
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border p-4">
-      <div>
-        <h3 className="font-semibold">গরু কিনছেন? শেয়ার করুন</h3>
-        <p className="text-xs text-muted-foreground">
-          এই হাট থেকে কী কিনলেন? ছবি ও দাম দিয়ে অন্যদের জানান।
-        </p>
+    <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+      <div className="flex items-center gap-2 border-b bg-muted/20 px-5 py-3.5">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
+          <ShoppingBag className="h-3.5 w-3.5 text-primary" />
+        </span>
+        <h3 className="text-sm font-bold">গরু কিনেছেন? শেয়ার করুন</h3>
       </div>
 
-      <div className="grid gap-2">
-        <Label>ছবি</Label>
-        {imageUrl ? (
-          <div className="relative">
-            <img src={imageUrl} alt="" className="aspect-[4/3] w-full rounded-lg object-cover" />
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="absolute right-2 top-2"
-              onClick={() => setImageUrl(undefined)}
-            >
-              পরিবর্তন
-            </Button>
-          </div>
-        ) : (
-          <label className="flex aspect-[4/3] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed text-sm text-muted-foreground hover:bg-muted/40">
-            <Camera className="h-6 w-6" />
-            <span>{upload.isPending ? 'আপলোড হচ্ছে…' : 'ছবি যোগ করুন'}</span>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => e.target.files?.[0] && onPickImage(e.target.files[0])}
-            />
-          </label>
-        )}
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        <div className="grid gap-1">
-          <Label>প্রাণী</Label>
-          <Select
-            value={watch('cattleType')}
-            onValueChange={(v) => setValue('cattleType', v as CattleType, { shouldValidate: true })}
-          >
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {(Object.keys(CATTLE_TYPE_LABEL) as CattleType[]).map((k) => (
-                <SelectItem key={k} value={k}>
-                  {CATTLE_TYPE_EMOJI[k]} {CATTLE_TYPE_LABEL[k]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid gap-1">
-          <Label>দাম (টাকা)</Label>
-          <Input type="number" inputMode="numeric" {...register('price')} />
-          {formState.errors.price && (
-            <p className="text-xs text-destructive">{formState.errors.price.message}</p>
+      <form onSubmit={onSubmit} className="space-y-4 p-5">
+        {/* Image upload */}
+        <div className="space-y-1.5">
+          <Label>ছবি</Label>
+          {imageUrl ? (
+            <div className="relative">
+              <img
+                src={imageUrl}
+                alt=""
+                className="aspect-[4/3] w-full rounded-xl object-cover ring-1 ring-border"
+              />
+              <button
+                type="button"
+                onClick={() => setImageUrl(undefined)}
+                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-background/80 backdrop-blur ring-1 ring-border transition hover:bg-background"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <label className="flex aspect-[4/3] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed text-sm text-muted-foreground transition hover:bg-muted/30">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                <Camera className="h-5 w-5" />
+              </span>
+              <span className="font-medium">
+                {upload.isPending ? 'আপলোড হচ্ছে…' : 'ছবি যোগ করুন'}
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => e.target.files?.[0] && onPickImage(e.target.files[0])}
+              />
+            </label>
           )}
         </div>
-      </div>
 
-      <div className="grid gap-1">
-        <Label>নোট (ঐচ্ছিক)</Label>
-        <Textarea
-          rows={2}
-          placeholder="যেমন: ভালো দামে পেয়েছি, দরদাম করতে পেরেছি…"
-          {...register('note')}
-        />
-      </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label>প্রাণী</Label>
+            <Select
+              value={watch('cattleType')}
+              onValueChange={(v) => setValue('cattleType', v as CattleType, { shouldValidate: true })}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {(Object.keys(CATTLE_TYPE_LABEL) as CattleType[]).map((k) => (
+                  <SelectItem key={k} value={k}>
+                    {CATTLE_TYPE_EMOJI[k]} {CATTLE_TYPE_LABEL[k]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>দাম (৳)</Label>
+            <Input type="number" inputMode="numeric" {...register('price')} />
+            {formState.errors.price && (
+              <p className="text-xs text-destructive">{formState.errors.price.message}</p>
+            )}
+          </div>
+        </div>
 
-      <Button type="submit" className="w-full" disabled={create.isPending || upload.isPending || !imageUrl}>
-        {create.isPending ? 'শেয়ার হচ্ছে…' : 'শেয়ার করুন'}
-      </Button>
-    </form>
+        <div className="space-y-1.5">
+          <Label>
+            নোট{' '}
+            <span className="text-xs font-normal text-muted-foreground">(ঐচ্ছিক)</span>
+          </Label>
+          <Textarea
+            rows={2}
+            placeholder="যেমন: ভালো দামে পেয়েছি, দরদাম করতে পেরেছি…"
+            {...register('note')}
+          />
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={create.isPending || upload.isPending || !imageUrl}
+        >
+          {create.isPending ? 'শেয়ার হচ্ছে…' : 'শেয়ার করুন'}
+        </Button>
+      </form>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Info, LogOut, Moon, Plus, Sun, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { GoruKoiLogo } from '@/components/ui/GoruKoiLogo';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,12 +23,10 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground font-bold">
-            গ
-          </div>
-          <span className="text-base font-semibold leading-none">
+          <GoruKoiLogo size={34} />
+          <span className="font-display text-base font-black leading-none tracking-tight">
             গরুকই
-            <span className="ml-1 text-xs font-normal text-muted-foreground">GoruKoi</span>
+            <span className="ml-1 text-xs font-normal font-bengali text-muted-foreground">GoruKoi</span>
           </span>
         </Link>
 
