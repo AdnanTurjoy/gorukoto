@@ -61,9 +61,6 @@ export function Header() {
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <UserIcon className="mr-2 h-4 w-4" /> প্রোফাইল
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/about')}>
-                  <Info className="mr-2 h-4 w-4" /> সম্পর্কে
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-2 h-4 w-4" /> লগআউট
                 </DropdownMenuItem>
