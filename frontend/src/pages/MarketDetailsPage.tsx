@@ -157,12 +157,14 @@ export default function MarketDetailsPage() {
         </div>
 
         <aside className="space-y-4">
-          <PurchaseForm marketId={market.id} />
           {token ? (
-            <PriceUpdateForm marketId={market.id} />
+            <>
+              <PurchaseForm marketId={market.id} />
+              <PriceUpdateForm marketId={market.id} />
+            </>
           ) : (
             <div className="rounded-xl border bg-muted/40 p-4 text-sm">
-              লাইভ দাম আপডেট দিতে অনুগ্রহ করে লগইন করুন।
+              দাম আপডেট ও কেনা গরু শেয়ার করতে অনুগ্রহ করে লগইন করুন।
             </div>
           )}
         </aside>

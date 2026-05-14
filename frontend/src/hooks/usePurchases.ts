@@ -18,7 +18,6 @@ export interface CreatePurchasePayload {
   price: number;
   imageUrl: string;
   note?: string;
-  buyerName?: string;
 }
 
 export function useCreatePurchase(marketId: string) {

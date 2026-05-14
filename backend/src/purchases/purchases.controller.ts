@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
-import { Request } from 'express';
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { Public } from '../common/decorators/public.decorator';
-import { OptionalJwtGuard } from '../common/guards/optional-jwt.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { CurrentUser, AuthUser } from '../common/decorators/current-user.decorator';
 
 class PageQuery {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page: number = 1;
@@ -22,17 +22,13 @@ export class PurchasesController {
     return this.purchases.list(marketId, q.page, q.limit);
   }
 
-  // Public endpoint that opportunistically extracts the user from the JWT
-  // when one is present. Anonymous submitters must supply dto.buyerName.
-  @Public()
-  @UseGuards(OptionalJwtGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(
-    @Req() req: Request,
+    @CurrentUser() user: AuthUser,
     @Param('marketId') marketId: string,
     @Body() dto: CreatePurchaseDto,
   ) {
-    const userId = (req.user as { id?: string } | undefined)?.id;
-    return this.purchases.create(userId, marketId, dto);
+    return this.purchases.create(user.id, marketId, dto);
   }
 }

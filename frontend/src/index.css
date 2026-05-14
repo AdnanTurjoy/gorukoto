@@ -71,6 +71,7 @@
 .leaflet-container { font-family: inherit; }
 .dark .leaflet-tile { filter: brightness(0.85) contrast(1.05); }
 .gorukoi-marker { background: transparent; border: 0; }
+.gorukoi-marker svg { display: block; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35)); }
 .gorukoi-user-location { background: transparent; border: 0; }
 .gorukoi-pulse { animation: gorukoi-pulse 1.8s ease-out infinite; }
 @keyframes gorukoi-pulse {

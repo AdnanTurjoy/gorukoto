@@ -18,7 +18,6 @@ import { CATTLE_TYPE_EMOJI, CATTLE_TYPE_LABEL } from '@/lib/constants';
 import { useCreatePurchase } from '@/hooks/usePurchases';
 import { useUpload } from '@/hooks/useUpload';
 import { useToast } from '@/components/ui/toast';
-import { useAuthStore } from '@/stores/authStore';
 import { apiErrorMessage } from '@/lib/api';
 import type { CattleType } from '@/types';
 
@@ -26,21 +25,18 @@ const schema = z.object({
   cattleType: z.enum(['COW', 'BUFFALO', 'GOAT', 'SHEEP', 'CAMEL']),
   price: z.coerce.number().int().min(0),
   note: z.string().max(500).optional().or(z.literal('')),
-  buyerName: z.string().max(80).optional().or(z.literal('')),
 });
 
 type FormValues = z.infer<typeof schema>;
 
 export function PurchaseForm({ marketId }: { marketId: string }) {
-  const user = useAuthStore((s) => s.user);
-  const isAnonymous = !user;
   const [imageUrl, setImageUrl] = useState<string | undefined>();
   const create = useCreatePurchase(marketId);
   const upload = useUpload();
   const { toast } = useToast();
   const { register, handleSubmit, setValue, watch, reset, formState } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { cattleType: 'COW', price: 0, note: '', buyerName: '' },
+    defaultValues: { cattleType: 'COW', price: 0, note: '' },
   });
 
   const onPickImage = async (file: File) => {
@@ -57,18 +53,12 @@ export function PurchaseForm({ marketId }: { marketId: string }) {
       toast({ title: 'একটি ছবি যোগ করুন', variant: 'destructive' });
       return;
     }
-    const buyerName = values.buyerName?.trim();
-    if (isAnonymous && (!buyerName || buyerName.length < 2)) {
-      toast({ title: 'আপনার নাম দিন', variant: 'destructive' });
-      return;
-    }
     try {
       await create.mutateAsync({
         cattleType: values.cattleType,
         price: values.price,
         imageUrl,
         note: values.note || undefined,
-        buyerName: isAnonymous ? buyerName : undefined,
       });
       toast({ title: 'শেয়ার হয়েছে', description: 'আপনার কেনা গরু সবার সাথে শেয়ার করা হয়েছে' });
       reset();
@@ -86,13 +76,6 @@ export function PurchaseForm({ marketId }: { marketId: string }) {
           এই হাট থেকে কী কিনলেন? ছবি ও দাম দিয়ে অন্যদের জানান।
         </p>
       </div>
-
-      {isAnonymous && (
-        <div className="grid gap-1">
-          <Label>আপনার নাম</Label>
-          <Input placeholder="যেমন: রহিম মিয়া" {...register('buyerName')} />
-        </div>
-      )}
 
       <div className="grid gap-2">
         <Label>ছবি</Label>

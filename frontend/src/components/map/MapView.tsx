@@ -21,27 +21,24 @@ interface MapViewProps {
   onReady?: (map: L.Map) => void;
 }
 
-// Pin-shape SVG marker with the taka glyph in a white circle.
+// Pin-shape SVG marker with the taka glyph in a white circle. The drop-shadow
+// is applied via CSS on `.gorukoi-marker svg` (filter inside an inline SVG had
+// rendering issues with divIcon innerHTML in some browsers — kept simple here).
 function priceMarkerIcon(color: string): L.DivIcon {
-  const svg = `
-    <svg viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg" width="36" height="46">
-      <defs>
-        <filter id="s" x="-20%" y="-10%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="rgba(0,0,0,0.35)"/>
-        </filter>
-      </defs>
-      <path filter="url(#s)" d="M18 0 C8 0 0 8 0 18 C0 30 18 46 18 46 S36 30 36 18 C36 8 28 0 18 0 Z"
-            fill="${color}" stroke="white" stroke-width="2.5"/>
-      <circle cx="18" cy="18" r="7.5" fill="white"/>
-      <text x="18" y="22.5" text-anchor="middle" fill="${color}" font-size="13" font-weight="700"
-            font-family="system-ui, sans-serif">৳</text>
-    </svg>`;
+  const html =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">` +
+    `<path d="M16 0C7.163 0 0 7.163 0 16c0 10.5 16 26 16 26s16-15.5 16-26C32 7.163 24.837 0 16 0Z" ` +
+    `fill="${color}" stroke="#ffffff" stroke-width="2.5"/>` +
+    `<circle cx="16" cy="16" r="7" fill="#ffffff"/>` +
+    `<text x="16" y="20" text-anchor="middle" fill="${color}" font-family="system-ui,sans-serif" ` +
+    `font-size="12" font-weight="700">৳</text>` +
+    `</svg>`;
   return L.divIcon({
     className: 'gorukoi-marker',
-    html: svg,
-    iconSize: [36, 46],
-    iconAnchor: [18, 46],
-    popupAnchor: [0, -42],
+    html,
+    iconSize: [32, 42],
+    iconAnchor: [16, 42],
+    popupAnchor: [0, -38],
   });
 }
 
