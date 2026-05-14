@@ -1,8 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import helmet from 'helmet';
-import { join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -12,10 +10,6 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
   const logger = new Logger('Bootstrap');
-
-  const uploadDir = process.env.UPLOAD_DIR || './uploads';
-  if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
-  app.useStaticAssets(join(process.cwd(), uploadDir), { prefix: '/uploads/' });
 
   app.setGlobalPrefix('api');
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));

@@ -10,9 +10,9 @@ Monorepo with **no root package.json** — `backend/` and `frontend/` are indepe
 
 ## Tech at a glance
 
-- **Backend** — NestJS 10, Prisma 5 (PostgreSQL), Redis (ioredis), JWT (passport-jwt), class-validator. Global `/api` prefix; static `/uploads` served from the same process.
+- **Backend** — NestJS 10, Prisma 5 (PostgreSQL), Redis (ioredis), JWT (passport-jwt), class-validator. Global `/api` prefix. Images stored on **Cloudinary** (no local disk).
 - **Frontend** — React 19, Vite, Tailwind, ShadCN-style primitives (hand-rolled in `src/components/ui/*`, no shadcn CLI), TanStack Query, Zustand (persisted via `localStorage`), React Hook Form + Zod, `react-leaflet` + OpenStreetMap tiles (no map API key).
-- **Infra** — Docker Compose orchestrates redis + backend + frontend. Postgres is hosted on **Neon** (managed); `DATABASE_URL` lives in `backend/.env` and is consumed by both the host `prisma` CLI and the backend container (via `env_file`). The compose `backend` service overrides only the values that differ inside the container (`REDIS_URL=redis://redis:6379`, `UPLOAD_DIR=/app/uploads`, etc). Backend container runs `prisma migrate deploy` on startup — so migrations must already exist in `prisma/migrations/` before the container can start cleanly (run `npx prisma migrate dev --name init` on the host once).
+- **Infra** — Docker Compose orchestrates redis + backend + frontend. Postgres is hosted on **Neon** (managed); `DATABASE_URL` lives in `backend/.env` and is consumed by both the host `prisma` CLI and the backend container (via `env_file`). The compose `backend` service overrides only the values that differ inside the container (`REDIS_URL=redis://redis:6379`). Backend container runs `prisma migrate deploy` on startup — so migrations must already exist in `prisma/migrations/` before the container can start cleanly (run `npx prisma migrate dev --name init` on the host once).
 
 ## Common commands
 
@@ -80,7 +80,7 @@ Implementation notes:
 - Body font is `font-bengali` (Noto Sans Bengali) set on `<body>` in `index.html`.
 
 ### File uploads
-Two-step in the UI: `useUpload` POSTs a multipart `file` to `/api/uploads` and gets back `{ url }`. That URL is then attached to the entity (market `imageUrls[]`, review `imageUrl`). The backend stores files on a disk volume (`UPLOAD_DIR`, default `./uploads`) and serves them at `/uploads/*` via `useStaticAssets`. Filenames are `randomUUID() + extname`. Allowed MIME: `image/jpeg | png | webp`. Max 5 MB.
+Two-step in the UI: `useUpload` POSTs a multipart `file` to `/api/uploads` and gets back `{ url }`. That URL (a Cloudinary `secure_url`) is then attached to the entity. The backend uses multer `memoryStorage` — no disk writes — and pipes the buffer to Cloudinary via `upload_stream` into the `gorukoi` folder. Allowed MIME: `image/jpeg | png | webp`. Max 5 MB.
 
 ### Prisma schema notes
 - IDs are `cuid()`. Enums (`PriceLevel`, `CrowdLevel`, `MarketSize`, `CattleType`, `ReactionType`, `Role`) are Postgres enums — adding a value requires a migration.
@@ -89,7 +89,7 @@ Two-step in the UI: `useUpload` POSTs a multipart `file` to `/api/uploads` and g
 
 ## Environment variables
 
-The backend reads `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `PORT`, `UPLOAD_DIR`, `PUBLIC_UPLOAD_URL`, `CORS_ORIGIN`. The frontend reads `VITE_API_BASE_URL`. The map needs no key. Examples in `backend/.env.example` and `frontend/.env.example`.
+The backend reads `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `PORT`, `CORS_ORIGIN`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`. The frontend reads `VITE_API_BASE_URL`. The map needs no key. Examples in `backend/.env.example` and `frontend/.env.example`.
 
 ## What's intentionally not built
 

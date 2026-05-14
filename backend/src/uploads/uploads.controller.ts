@@ -7,9 +7,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { randomUUID } from 'crypto';
+import { memoryStorage } from 'multer';
 import { Throttle } from '@nestjs/throttler';
 import { UploadsService } from './uploads.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -26,10 +24,7 @@ export class UploadsController {
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: process.env.UPLOAD_DIR || './uploads',
-        filename: (_req, file, cb) => cb(null, `${randomUUID()}${extname(file.originalname)}`),
-      }),
+      storage: memoryStorage(),
       limits: { fileSize: MAX_BYTES },
       fileFilter: (_req, file, cb) => {
         if (!ALLOWED.includes(file.mimetype)) {
@@ -39,8 +34,9 @@ export class UploadsController {
       },
     }),
   )
-  upload(@UploadedFile() file: Express.Multer.File) {
+  async upload(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No file provided');
-    return { url: this.uploads.buildUrl(file.filename), size: file.size, mimeType: file.mimetype };
+    const url = await this.uploads.upload(file.buffer);
+    return { url, size: file.size, mimeType: file.mimetype };
   }
 }
