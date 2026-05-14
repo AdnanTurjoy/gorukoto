@@ -26,6 +26,13 @@ const SIZE_LABEL: Record<Market['marketSize'], string> = {
   SMALL: 'ছোট', MEDIUM: 'মাঝারি', LARGE: 'বড়', XLARGE: 'খুব বড়',
 };
 
+const WATERMARK_ANIMALS = ['🐂', '🐐', '🐑', '🐪', '🐃'];
+
+function animalWatermark(id: string): string {
+  const hash = id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  return WATERMARK_ANIMALS[hash % WATERMARK_ANIMALS.length];
+}
+
 export function MarketCard({ market }: { market: Market }) {
   const variant = market.priceLevel.toLowerCase() as 'cheap' | 'fair' | 'expensive';
   const tint = PRICE_LEVEL_COLOR[market.priceLevel];
@@ -46,12 +53,12 @@ export function MarketCard({ market }: { market: Market }) {
             className="relative overflow-hidden px-4 pb-4 pt-4"
             style={{ background: HEADER_BG[market.priceLevel] }}
           >
-            {/* 🐄 watermark */}
+            {/* animal watermark */}
             <div
               aria-hidden
               className="pointer-events-none absolute -right-2 -top-2 select-none text-[5rem] leading-none opacity-[0.18]"
             >
-              🐄
+              {animalWatermark(market.id)}
             </div>
 
             {/* Arrow icon */}

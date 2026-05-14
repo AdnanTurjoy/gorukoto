@@ -90,12 +90,12 @@ export default function MarketDetailsPage() {
           className="pointer-events-none absolute inset-x-0 top-0 h-28"
           style={{ background: `linear-gradient(to bottom, ${priceTint}12, transparent)` }}
         />
-        {/* 🐄 watermark */}
+        {/* 🐂 watermark */}
         <div
           aria-hidden
           className="pointer-events-none absolute -right-4 -top-2 select-none text-[8rem] leading-none opacity-[0.055]"
         >
-          🐄
+          🐂
         </div>
 
         <div className="relative p-5 sm:p-6">

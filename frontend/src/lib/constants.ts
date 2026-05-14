@@ -52,7 +52,7 @@ export const CATTLE_TYPE_LABEL: Record<CattleType, string> = {
 };
 
 export const CATTLE_TYPE_EMOJI: Record<CattleType, string> = {
-  COW: '🐄',
+  COW: '🐂',
   BUFFALO: '🐃',
   GOAT: '🐐',
   SHEEP: '🐑',

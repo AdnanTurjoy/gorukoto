@@ -196,7 +196,7 @@ export default function HomePage() {
               ))}
               {/* Center circle */}
               <div className="relative flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-gradient-to-br from-amber-400/20 to-green-700/20 ring-1 ring-amber-400/30">
-                <span className="text-4xl leading-none">🐄</span>
+                <span className="text-4xl leading-none">🐂</span>
               </div>
             </div>
           </div>

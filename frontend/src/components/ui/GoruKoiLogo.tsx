@@ -6,7 +6,7 @@ export function GoruKoiLogo({ size = 32 }: { size?: number }) {
       viewBox="0 0 44 44"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="গরুকই লোগো"
+      aria-label="গরুকই — ষাঁড়ের লোগো"
     >
       <defs>
         <linearGradient id="gk-bg" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
