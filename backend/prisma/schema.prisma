@@ -1,0 +1,180 @@
+// GoruKoi — cattle market discovery for Bangladesh.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PriceLevel {
+  CHEAP        // কম দাম
+  FAIR         // স্বাভাবিক
+  EXPENSIVE    // বেশি দাম
+}
+
+enum CrowdLevel {
+  LOW
+  MEDIUM
+  HIGH
+  PACKED
+}
+
+enum MarketSize {
+  SMALL
+  MEDIUM
+  LARGE
+  XLARGE
+}
+
+enum CattleType {
+  COW          // গরু
+  BUFFALO      // মহিষ
+  GOAT         // ছাগল
+  SHEEP        // ভেড়া
+  CAMEL        // উট
+}
+
+enum ReactionType {
+  HELPFUL
+  NOT_HELPFUL
+}
+
+// ---------- Models ----------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  phone        String?  @unique
+  name         String
+  passwordHash String
+  avatarUrl    String?
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  markets       Market[]
+  reviews       Review[]
+  reactions     ReviewReaction[]
+  priceUpdates  PriceUpdate[]
+  comments      Comment[]
+  purchases     Purchase[]
+
+  @@index([email])
+}
+
+model Market {
+  id           String      @id @default(cuid())
+  name         String
+  description  String?
+  area         String
+  district     String
+  division     String
+  lat          Float
+  lng          Float
+  marketSize   MarketSize  @default(MEDIUM)
+  crowdLevel   CrowdLevel  @default(MEDIUM)
+  priceLevel   PriceLevel  @default(FAIR)
+  minPrice     Int?        // BDT
+  maxPrice     Int?        // BDT
+  startsOn     DateTime?
+  endsOn       DateTime?
+  verified     Boolean     @default(false)
+  createdById  String
+  createdBy    User        @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  reviews       Review[]
+  priceUpdates  PriceUpdate[]
+  comments      Comment[]
+  purchases     Purchase[]
+
+  @@index([division, district])
+  @@index([priceLevel])
+  @@index([crowdLevel])
+  @@index([lat, lng])
+}
+
+model Review {
+  id          String      @id @default(cuid())
+  marketId    String
+  market      Market      @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  priceTag    PriceLevel
+  comment     String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  reactions   ReviewReaction[]
+
+  @@index([marketId, createdAt])
+  @@index([authorId])
+}
+
+model ReviewReaction {
+  id        String        @id @default(cuid())
+  reviewId  String
+  review    Review        @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      ReactionType
+  createdAt DateTime      @default(now())
+
+  @@unique([reviewId, userId])
+  @@index([reviewId])
+}
+
+model PriceUpdate {
+  id          String      @id @default(cuid())
+  marketId    String
+  market      Market      @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  reporterId  String
+  reporter    User        @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  cattleType  CattleType
+  minPrice    Int
+  maxPrice    Int
+  note        String?
+  createdAt   DateTime    @default(now())
+
+  @@index([marketId, createdAt])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  marketId  String
+  market    Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([marketId, createdAt])
+}
+
+// "গরু কিনসো?" — what a buyer brought home from this hat.
+model Purchase {
+  id         String     @id @default(cuid())
+  marketId   String
+  market     Market     @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  buyerId    String
+  buyer      User       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  cattleType CattleType
+  price      Int        // BDT
+  imageUrl   String
+  note       String?
+  createdAt  DateTime   @default(now())
+
+  @@index([marketId, createdAt])
+  @@index([buyerId])
+}
