@@ -12,6 +12,7 @@ import {
   Users,
 } from 'lucide-react';
 import { GoruKoiLogo } from '@/components/ui/GoruKoiLogo';
+import { SEO } from '@/components/common/SEO';
 
 const stagger = { animate: { transition: { staggerChildren: 0.07 } } };
 const fadeUp = {
@@ -74,6 +75,11 @@ const steps = [
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-8 py-6">
+      <SEO
+        title="গরুকই সম্পর্কে"
+        description="গরুকই সম্পর্কে জানুন — বাংলাদেশের গরুর হাট কমিউনিটি প্ল্যাটফর্ম, কোরবানির ঈদে লাইভ দাম ও তথ্য।"
+        canonical="/about"
+      />
 
       {/* ── Hero ──────────────────────────────────────────── */}
       <motion.section

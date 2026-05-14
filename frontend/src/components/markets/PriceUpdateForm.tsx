@@ -73,7 +73,7 @@ export function PriceUpdateForm({ marketId }: { marketId: string }) {
           <Label>প্রাণীর ধরন</Label>
           <Select
             value={watch('cattleType')}
-            onValueChange={(v) => setValue('cattleType', v as CattleType, { shouldValidate: true })}
+            onValueChange={(v) => setValue('cattleType', v as 'COW' | 'BUFFALO' | 'GOAT' | 'SHEEP', { shouldValidate: true })}
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>

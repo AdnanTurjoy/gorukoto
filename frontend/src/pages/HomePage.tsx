@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GoruKoiLogo } from '@/components/ui/GoruKoiLogo';
+import { SEO } from '@/components/common/SEO';
 import { MarketCard } from '@/components/markets/MarketCard';
 import { MarketFilters } from '@/components/markets/MarketFilters';
 import { GoruKinchenDialog } from '@/components/markets/GoruKinchenDialog';
@@ -76,6 +77,15 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
+      <SEO
+        canonical="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'বাংলাদেশের গরুর হাট তালিকা',
+          description: 'কোরবানির ঈদে বাংলাদেশের গরুর হাট — লাইভ দাম ও কমিউনিটি আপডেট।',
+        }}
+      />
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section
         className="relative overflow-hidden rounded-3xl shadow-xl"

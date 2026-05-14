@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { SEO } from '@/components/common/SEO';
 import type L from 'leaflet';
 import { LocateFixed, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,11 @@ export default function MapPage() {
 
   return (
     <div className="relative h-full">
+      <SEO
+        title="ম্যাপে হাট দেখুন"
+        description="বাংলাদেশের সকল গরুর হাট ম্যাপে দেখুন — দামের রঙ-কোড, ফিল্টার ও লাইভ লোকেশন।"
+        canonical="/map"
+      />
       {/* Top floating filter panel + count chip */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[800] p-3">
         <div className="pointer-events-auto mx-auto max-w-5xl space-y-2">

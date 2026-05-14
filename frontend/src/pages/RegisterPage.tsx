@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { SEO } from '@/components/common/SEO';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -40,6 +41,7 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto max-w-md space-y-6 py-10">
+      <SEO title="নিবন্ধন" canonical="/register" noIndex />
       <h1 className="text-2xl font-bold">রেজিস্টার করুন</h1>
       <form onSubmit={onSubmit} className="space-y-3">
         <div>

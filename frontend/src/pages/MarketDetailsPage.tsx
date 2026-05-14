@@ -25,6 +25,7 @@ import {
 } from '@/lib/constants';
 import { formatBdt, priceRange, timeAgoBn, toBengaliNumerals } from '@/lib/utils';
 import { MapView } from '@/components/map/MapView';
+import { SEO } from '@/components/common/SEO';
 import { PriceUpdateForm } from '@/components/markets/PriceUpdateForm';
 import { PurchaseList } from '@/components/markets/PurchaseList';
 import { PurchaseForm } from '@/components/markets/PurchaseForm';
@@ -65,8 +66,34 @@ export default function MarketDetailsPage() {
   const priceTint = PRICE_LEVEL_COLOR[market.priceLevel];
   const variant = market.priceLevel.toLowerCase() as 'cheap' | 'fair' | 'expensive';
 
+  const marketJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: market.name,
+    description: market.description ?? `${market.name} — গরুর হাট, ${market.area}, ${market.district}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: market.area,
+      addressLocality: market.district,
+      addressRegion: market.division,
+      addressCountry: 'BD',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: market.lat,
+      longitude: market.lng,
+    },
+    url: `https://gorukoi.com/markets/${market.id}`,
+  };
+
   return (
     <div className="space-y-5">
+      <SEO
+        title={`${market.name} — ${market.area}, ${market.district}`}
+        description={`${market.name} গরুর হাট — ${market.area}, ${market.district}, ${market.division}। লাইভ দাম ও কমিউনিটি আপডেট।`}
+        canonical={`/markets/${market.id}`}
+        jsonLd={marketJsonLd}
+      />
 
       {/* ── Map banner ─────────────────────────────────── */}
       <motion.section

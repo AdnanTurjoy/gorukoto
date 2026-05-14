@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { SEO } from '@/components/common/SEO';
 
 export default function NotFoundPage() {
   return (
     <div className="grid place-items-center gap-3 py-16 text-center">
+      <SEO title="পেজ পাওয়া যায়নি" noIndex />
       <h1 className="text-3xl font-bold">পাতা পাওয়া যায়নি</h1>
       <p className="text-muted-foreground">আপনি যে পাতাটি খুঁজছেন সেটি আর নেই।</p>
       <Button asChild>

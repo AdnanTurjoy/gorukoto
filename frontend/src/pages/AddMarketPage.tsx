@@ -28,6 +28,7 @@ import {
 } from '@/lib/constants';
 import type { CrowdLevel, MarketSize, PriceLevel } from '@/types';
 import { toBengaliNumerals } from '@/lib/utils';
+import { SEO } from '@/components/common/SEO';
 
 const schema = z
   .object({
@@ -127,6 +128,7 @@ export default function AddMarketPage() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-5">
+      <SEO title="নতুন হাট যোগ করুন" canonical="/add" noIndex />
       <div className="lg:col-span-3 space-y-3">
         <h1 className="text-2xl font-bold">নতুন হাট যোগ করুন</h1>
         <p className="text-sm text-muted-foreground">

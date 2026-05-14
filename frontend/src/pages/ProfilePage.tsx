@@ -1,3 +1,4 @@
+import { SEO } from '@/components/common/SEO';
 import { useAuthStore } from '@/stores/authStore';
 import { useMe } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,6 +15,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-xl space-y-6 py-6">
+      <SEO title="প্রোফাইল" canonical="/profile" noIndex />
       <div className="flex items-center gap-4">
         <Avatar className="h-16 w-16">
           <AvatarImage src={me.avatarUrl ?? undefined} />

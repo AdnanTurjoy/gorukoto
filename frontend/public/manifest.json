@@ -1,0 +1,14 @@
+{
+  "name": "গরুকই — GoruKoi",
+  "short_name": "গরুকই",
+  "description": "বাংলাদেশের গরুর হাট খুঁজুন — লাইভ দাম ও কমিউনিটি আপডেট।",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "lang": "bn",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any maskable" }
+  ],
+  "categories": ["shopping", "lifestyle", "food"]
+}

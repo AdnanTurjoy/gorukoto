@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { SEO } from '@/components/common/SEO';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -36,6 +37,7 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-md space-y-6 py-10">
+      <SEO title="লগইন" canonical="/login" noIndex />
       <h1 className="text-2xl font-bold">লগইন করুন</h1>
       <form onSubmit={onSubmit} className="space-y-3">
         <div>

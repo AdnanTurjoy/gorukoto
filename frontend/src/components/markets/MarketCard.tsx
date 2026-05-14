@@ -11,9 +11,9 @@ import { priceRange, toBengaliNumerals } from '@/lib/utils';
 import type { Market } from '@/types';
 
 const HEADER_BG: Record<Market['priceLevel'], string> = {
-  CHEAP:     'linear-gradient(140deg, #dcfce7 0%, #bbf7d0 100%)',
-  FAIR:      'linear-gradient(140deg, #fef3c7 0%, #fde68a 100%)',
-  EXPENSIVE: 'linear-gradient(140deg, #fee2e2 0%, #fecaca 100%)',
+  CHEAP:     'linear-gradient(140deg, #16a34a 0%, #14532d 100%)',
+  FAIR:      'linear-gradient(140deg, #d97706 0%, #78350f 100%)',
+  EXPENSIVE: 'linear-gradient(140deg, #dc2626 0%, #7f1d1d 100%)',
 };
 
 const HOVER_SHADOW: Record<Market['priceLevel'], string> = {
@@ -56,30 +56,27 @@ export function MarketCard({ market }: { market: Market }) {
             {/* animal watermark */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -right-2 -top-2 select-none text-[5rem] leading-none opacity-[0.18]"
+              className="pointer-events-none absolute -right-2 -top-2 select-none text-[5rem] leading-none opacity-[0.22]"
             >
               {animalWatermark(market.id)}
             </div>
 
             {/* Arrow icon */}
             <div className="mb-2 flex justify-end">
-              <ArrowUpRight className="h-4 w-4 text-foreground/30 transition-all duration-200 group-hover:text-foreground/70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <ArrowUpRight className="h-4 w-4 text-white/40 transition-all duration-200 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </div>
 
             {/* Name */}
-            <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground sm:text-[0.9375rem]">
+            <h3 className="line-clamp-2 text-sm font-bold leading-snug text-white sm:text-[0.9375rem]">
               {market.name}
             </h3>
 
             {/* Location */}
-            <div className="mt-1.5 flex items-center gap-1 text-xs text-foreground/55">
-              <MapPin className="h-3 w-3 shrink-0" style={{ color: tint }} />
+            <div className="mt-1.5 flex items-center gap-1 text-xs text-white/65">
+              <MapPin className="h-3 w-3 shrink-0 text-white/70" />
               <span className="line-clamp-1 flex-1">{market.area}, {market.district}</span>
               {market.distanceKm != null && (
-                <span
-                  className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
-                  style={{ background: `${tint}25`, color: tint }}
-                >
+                <span className="shrink-0 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-semibold text-white">
                   {toBengaliNumerals(market.distanceKm.toFixed(1))} কিমি
                 </span>
               )}
