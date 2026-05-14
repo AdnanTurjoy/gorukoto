@@ -1,6 +1,10 @@
 import type { CrowdLevel, PriceLevel, CattleType, MarketSize } from '@/types';
 
 export const DHAKA_CENTER = { lat: 23.8103, lng: 90.4125 };
+// Geographic center of Bangladesh — used as the default map view so the whole
+// country fits at the default zoom on typical desktop viewports.
+export const BANGLADESH_CENTER = { lat: 23.685, lng: 90.3563 };
+export const BANGLADESH_ZOOM = 7;
 
 export const DIVISIONS = [
   'Dhaka',

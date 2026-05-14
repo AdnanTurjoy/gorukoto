@@ -69,7 +69,7 @@ export interface Purchase {
   imageUrl: string;
   note: string | null;
   createdAt: string;
-  buyer: { id: string; name: string; avatarUrl: string | null };
+  buyer: { id: string | null; name: string; avatarUrl: string | null };
 }
 
 export interface Paginated<T> {

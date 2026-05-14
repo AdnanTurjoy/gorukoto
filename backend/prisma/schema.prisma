@@ -162,13 +162,16 @@ model Comment {
   @@index([marketId, createdAt])
 }
 
-// "গরু কিনসো?" — what a buyer brought home from this hat.
+// "গরু কিনছেন?" — what a buyer brought home from this hat. Anonymous-friendly:
+// buyerId is null when an unauthenticated user submits; buyerName is the
+// display string in either case (defaults to the logged-in user's name).
 model Purchase {
   id         String     @id @default(cuid())
   marketId   String
   market     Market     @relation(fields: [marketId], references: [id], onDelete: Cascade)
-  buyerId    String
-  buyer      User       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId    String?
+  buyer      User?      @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  buyerName  String
   cattleType CattleType
   price      Int        // BDT
   imageUrl   String

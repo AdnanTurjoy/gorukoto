@@ -3,14 +3,12 @@ import {
   Activity,
   BadgeCheck,
   MapPin,
-  MessageSquare,
   ShoppingBag,
   Users,
   Wallet,
 } from 'lucide-react';
 import type { ComponentType, SVGProps } from 'react';
 import { useMarket } from '@/hooks/useMarkets';
-import { useReviews } from '@/hooks/useReviews';
 import { usePriceUpdates } from '@/hooks/usePriceUpdates';
 import { usePurchases } from '@/hooks/usePurchases';
 import { useAuthStore } from '@/stores/authStore';
@@ -25,7 +23,6 @@ import {
 } from '@/lib/constants';
 import { formatBdt, priceRange, timeAgoBn, toBengaliNumerals } from '@/lib/utils';
 import { MapView } from '@/components/map/MapView';
-import { ReviewItem } from '@/components/reviews/ReviewItem';
 import { PriceUpdateForm } from '@/components/markets/PriceUpdateForm';
 import { PurchaseList } from '@/components/markets/PurchaseList';
 import { PurchaseForm } from '@/components/markets/PurchaseForm';
@@ -35,7 +32,6 @@ type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 export default function MarketDetailsPage() {
   const { id = '' } = useParams<{ id: string }>();
   const { data: market, isLoading } = useMarket(id);
-  const { data: reviews } = useReviews(id);
   const { data: prices } = usePriceUpdates(id);
   const { data: purchases } = usePurchases(id);
   const token = useAuthStore((s) => s.token);
@@ -101,7 +97,7 @@ export default function MarketDetailsPage() {
           <Badge variant="outline">আকার: {MARKET_SIZE_LABEL[market.marketSize]}</Badge>
         </div>
 
-        <div className="relative mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="relative mt-5 grid grid-cols-3 gap-2">
           <StatTile
             icon={Wallet}
             label="দামের পরিসর"
@@ -116,11 +112,6 @@ export default function MarketDetailsPage() {
             icon={Activity}
             label="লাইভ আপডেট"
             value={toBengaliNumerals(market._count?.priceUpdates ?? 0)}
-          />
-          <StatTile
-            icon={MessageSquare}
-            label="রিভিউ"
-            value={toBengaliNumerals(market._count?.reviews ?? 0)}
           />
         </div>
 
@@ -163,24 +154,15 @@ export default function MarketDetailsPage() {
           >
             <PurchaseList items={purchases?.items ?? []} />
           </Section>
-
-          <Section title={`রিভিউ (${toBengaliNumerals(reviews?.total ?? 0)})`} icon={MessageSquare}>
-            <div className="divide-y">
-              {reviews?.items.map((r) => <ReviewItem key={r.id} marketId={market.id} review={r} />)}
-            </div>
-            {!reviews?.items.length && <Empty text="এখনো কেউ রিভিউ লেখেননি।" />}
-          </Section>
         </div>
 
         <aside className="space-y-4">
+          <PurchaseForm marketId={market.id} />
           {token ? (
-            <>
-              <PurchaseForm marketId={market.id} />
-              <PriceUpdateForm marketId={market.id} />
-            </>
+            <PriceUpdateForm marketId={market.id} />
           ) : (
             <div className="rounded-xl border bg-muted/40 p-4 text-sm">
-              দাম আপডেট ও কেনা গরু শেয়ার করতে অনুগ্রহ করে লগইন করুন।
+              লাইভ দাম আপডেট দিতে অনুগ্রহ করে লগইন করুন।
             </div>
           )}
         </aside>

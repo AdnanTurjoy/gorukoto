@@ -15,21 +15,50 @@ interface MapViewProps {
   pinDraft?: { lat: number; lng: number } | null;
   selectedId?: string | null;
   onSelect?: (id: string | null) => void;
+  /** User's current location — rendered as a blue pulsing dot if provided. */
+  userLocation?: { lat: number; lng: number } | null;
+  /** Optional ref-like callback so a parent can recenter the map programmatically. */
+  onReady?: (map: L.Map) => void;
 }
 
+// Pin-shape SVG marker with the taka glyph in a white circle.
 function priceMarkerIcon(color: string): L.DivIcon {
+  const svg = `
+    <svg viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg" width="36" height="46">
+      <defs>
+        <filter id="s" x="-20%" y="-10%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="rgba(0,0,0,0.35)"/>
+        </filter>
+      </defs>
+      <path filter="url(#s)" d="M18 0 C8 0 0 8 0 18 C0 30 18 46 18 46 S36 30 36 18 C36 8 28 0 18 0 Z"
+            fill="${color}" stroke="white" stroke-width="2.5"/>
+      <circle cx="18" cy="18" r="7.5" fill="white"/>
+      <text x="18" y="22.5" text-anchor="middle" fill="${color}" font-size="13" font-weight="700"
+            font-family="system-ui, sans-serif">৳</text>
+    </svg>`;
   return L.divIcon({
     className: 'gorukoi-marker',
-    html: `<div style="background:${color};border:2px solid white;width:36px;height:36px;border-radius:9999px;display:grid;place-items:center;color:white;font-weight:700;font-size:12px;box-shadow:0 4px 8px rgba(0,0,0,.25)">৳</div>`,
-    iconSize: [36, 36],
-    iconAnchor: [18, 36],
-    popupAnchor: [0, -32],
+    html: svg,
+    iconSize: [36, 46],
+    iconAnchor: [18, 46],
+    popupAnchor: [0, -42],
   });
 }
 
 const draftIcon = L.divIcon({
   className: 'gorukoi-marker',
   html: `<div style="width:18px;height:18px;border-radius:9999px;background:hsl(142 71% 36%);box-shadow:0 0 0 6px hsla(142,71%,36%,.25);"></div>`,
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+});
+
+const userLocationIcon = L.divIcon({
+  className: 'gorukoi-user-location',
+  html: `
+    <div style="position:relative;width:18px;height:18px;">
+      <div style="position:absolute;inset:0;border-radius:50%;background:#2563eb;border:2.5px solid white;box-shadow:0 1px 4px rgba(0,0,0,.35);"></div>
+      <div class="gorukoi-pulse" style="position:absolute;inset:-10px;border-radius:50%;background:rgba(37,99,235,.25);"></div>
+    </div>`,
   iconSize: [18, 18],
   iconAnchor: [9, 9],
 });
@@ -51,6 +80,14 @@ function Recenter({ center, zoom }: { center: { lat: number; lng: number }; zoom
   return null;
 }
 
+function ExposeMap({ onReady }: { onReady?: (m: L.Map) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    onReady?.(map);
+  }, [map, onReady]);
+  return null;
+}
+
 export function MapView({
   markets,
   center,
@@ -59,6 +96,8 @@ export function MapView({
   pinDraft,
   selectedId,
   onSelect,
+  userLocation,
+  onReady,
 }: MapViewProps) {
   const navigate = useNavigate();
   const initial = center ?? DHAKA_CENTER;
@@ -73,15 +112,19 @@ export function MapView({
       center={[initial.lat, initial.lng]}
       zoom={zoom}
       scrollWheelZoom
+      zoomControl={false}
       style={{ height: '100%', width: '100%' }}
     >
+      {/* CartoDB Voyager — softer, cleaner tiles than vanilla OSM. */}
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://carto.com/attributions">CARTO</a>'
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        subdomains={['a', 'b', 'c', 'd']}
         maxZoom={19}
       />
       {center && <Recenter center={center} zoom={zoom} />}
       <ClickHandler onClick={onMapClick} />
+      {onReady && <ExposeMap onReady={onReady} />}
 
       {markets.map((m) => {
         const variant = m.priceLevel.toLowerCase() as 'cheap' | 'fair' | 'expensive';
@@ -118,6 +161,9 @@ export function MapView({
       })}
 
       {pinDraft && <Marker position={[pinDraft.lat, pinDraft.lng]} icon={draftIcon} />}
+      {userLocation && (
+        <Marker position={[userLocation.lat, userLocation.lng]} icon={userLocationIcon} interactive={false} />
+      )}
     </MapContainer>
   );
 }

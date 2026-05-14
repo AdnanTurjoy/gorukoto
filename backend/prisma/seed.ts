@@ -60,7 +60,9 @@ async function main() {
       update: {},
       create: {
         id: `seed-buy-${m.name}`,
-        marketId: market.id, buyerId: demo.id,
+        marketId: market.id,
+        buyerId: demo.id,
+        buyerName: demo.name,
         cattleType: CattleType.COW,
         price: Math.round((m.minPrice ?? 60000) * 1.1),
         imageUrl: 'https://placehold.co/600x400/16a34a/white?text=Gorur+Chobi',
