@@ -34,7 +34,7 @@ export class AuthController {
 
   private callbackUrl(req: Request): string {
     const proto = (req.headers['x-forwarded-proto'] as string) || req.protocol;
-    const host = req.get('host')!;
+    const host = (req.headers['x-forwarded-host'] as string) || req.get('host')!;
     return `${proto}://${host}/api/auth/google/callback`;
   }
 
