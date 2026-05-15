@@ -1,10 +1,11 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Home, Map, Plus, User } from 'lucide-react';
+import { Home, Info, Map, Plus, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const items = [
   { to: '/', label: 'হোম', icon: Home, end: true },
   { to: '/map', label: 'ম্যাপ', icon: Map },
+  { to: '/about', label: 'সম্পর্কে', icon: Info },
   { to: '/profile', label: 'প্রোফাইল', icon: User },
 ];
 
@@ -27,7 +28,7 @@ export function BottomNav() {
       </Link>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 backdrop-blur sm:hidden">
-        <ul className="safe-bottom mx-auto grid max-w-md grid-cols-3 gap-1 px-4 py-2">
+        <ul className="safe-bottom mx-auto grid max-w-md grid-cols-4 gap-1 px-4 py-2">
           {items.map(({ to, label, icon: Icon, end }) => (
             <li key={to}>
               <NavLink
