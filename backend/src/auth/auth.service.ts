@@ -63,9 +63,7 @@ export class AuthService {
     });
   }
 
-  async handleGoogleCallback(code: string) {
-    const apiUrl = process.env.API_URL || 'http://localhost:3000';
-
+  async handleGoogleCallback(code: string, redirectUri: string) {
     const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -73,7 +71,7 @@ export class AuthService {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID!,
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        redirect_uri: `${apiUrl}/api/auth/google/callback`,
+        redirect_uri: redirectUri,
         grant_type: 'authorization_code',
       }),
     });
