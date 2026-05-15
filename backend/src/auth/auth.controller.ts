@@ -32,18 +32,16 @@ export class AuthController {
     return this.auth.me(user.id);
   }
 
-  private callbackUrl(req: Request): string {
-    const proto = (req.headers['x-forwarded-proto'] as string) || req.protocol;
-    const host = (req.headers['x-forwarded-host'] as string) || req.get('host')!;
-    return `${proto}://${host}/api/auth/google/callback`;
+  private callbackUrl(): string {
+    return process.env.GOOGLE_CALLBACK_URL || 'http://localhost:4000/api/auth/google/callback';
   }
 
   @Public()
   @Get('google')
-  googleLogin(@Req() req: Request, @Res() res: Response) {
+  googleLogin(@Res() res: Response) {
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID!,
-      redirect_uri: this.callbackUrl(req),
+      redirect_uri: this.callbackUrl(),
       response_type: 'code',
       scope: 'openid email profile',
       access_type: 'online',
@@ -55,7 +53,6 @@ export class AuthController {
   @Public()
   @Get('google/callback')
   async googleCallback(
-    @Req() req: Request,
     @Query('code') code: string,
     @Query('error') error: string,
     @Res() res: Response,
@@ -65,7 +62,7 @@ export class AuthController {
       return res.redirect(`${frontendUrl}/login?error=google_denied`);
     }
     try {
-      const { accessToken } = await this.auth.handleGoogleCallback(code, this.callbackUrl(req));
+      const { accessToken } = await this.auth.handleGoogleCallback(code, this.callbackUrl());
       res.redirect(`${frontendUrl}/auth/callback?token=${accessToken}`);
     } catch {
       res.redirect(`${frontendUrl}/login?error=google_failed`);
