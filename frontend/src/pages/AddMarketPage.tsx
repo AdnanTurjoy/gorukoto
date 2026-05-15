@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { MapView } from '@/components/map/MapView';
+import { LocationSearch } from '@/components/map/LocationSearch';
 import { useCreateMarket } from '@/hooks/useMarkets';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useToast } from '@/components/ui/toast';
@@ -55,6 +57,8 @@ export default function AddMarketPage() {
   const initialCenter = geo.lat && geo.lng ? { lat: geo.lat, lng: geo.lng } : DHAKA_CENTER;
   const [point, setPoint] = useState<{ lat: number; lng: number } | null>(null);
   const [geocoding, setGeocoding] = useState(false);
+  const mapRef = useRef<L.Map | null>(null);
+  const onMapReady = useCallback((m: L.Map) => { mapRef.current = m; }, []);
   const create = useCreateMarket();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -134,14 +138,23 @@ export default function AddMarketPage() {
         <p className="text-sm text-muted-foreground">
           ম্যাপে যে স্থানে হাটটি হচ্ছে সেখানে ক্লিক করুন। নিচের ফর্ম পূরণ করে সংরক্ষণ করুন।
         </p>
-        <div className="h-[420px] overflow-hidden rounded-xl border">
-          <MapView
-            markets={[]}
-            center={initialCenter}
-            zoom={12}
-            pinDraft={point}
-            onMapClick={(ll) => setPoint(ll)}
-          />
+        <div className="relative">
+          {/* Location search — floats over the map */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] p-2">
+            <div className="pointer-events-auto">
+              <LocationSearch mapRef={mapRef} onPick={setPoint} />
+            </div>
+          </div>
+          <div className="h-[420px] overflow-hidden rounded-xl border">
+            <MapView
+              markets={[]}
+              center={initialCenter}
+              zoom={12}
+              pinDraft={point}
+              onMapClick={(ll) => setPoint(ll)}
+              onReady={onMapReady}
+            />
+          </div>
         </div>
         {point && (
           <p className="text-xs text-muted-foreground">

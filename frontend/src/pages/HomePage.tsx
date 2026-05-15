@@ -156,27 +156,28 @@ export default function HomePage() {
               কেনাকাটার অভিজ্ঞতা শেয়ার করুন।
             </motion.p>
 
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-2.5">
+            <motion.div variants={fadeUp} className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
+              <Link
+                to="/add"
+                className="group order-first inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-5 py-4 text-base font-bold text-white shadow-lg shadow-emerald-600/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-400 active:translate-y-0 sm:order-last sm:w-auto sm:border sm:border-emerald-400/45 sm:bg-emerald-500/10 sm:py-2.5 sm:text-sm sm:text-emerald-300 sm:shadow-emerald-900/20 sm:hover:bg-emerald-500/20 sm:hover:text-emerald-200"
+              >
+                <Plus className="h-5 w-5 transition-transform duration-200 group-hover:rotate-90 sm:h-4 sm:w-4"/>
+                <span className="sm:hidden">নতুন হাট যোগ করুন</span>
+                <span className="hidden sm:inline">নতুন হাট</span>
+              </Link>
               <button
                 onClick={() => setPurchaseOpen(true)}
-                className="group inline-flex items-center gap-2 rounded-2xl bg-amber-400 px-5 py-2.5 text-sm font-bold text-amber-950 shadow-lg shadow-amber-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-300 active:translate-y-0"
+                className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-bold text-amber-950 shadow-lg shadow-amber-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-amber-300 active:translate-y-0 sm:w-auto sm:py-2.5"
               >
                 <ShoppingBag className="h-4 w-4 transition-transform duration-200 group-hover:scale-110"/>
                 গরু কিনছেন? শেয়ার করুন
               </button>
               <Link
                 to="/map"
-                className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/18"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/18 sm:w-auto sm:py-2.5"
               >
                 <MapIcon className="h-4 w-4"/>
                 ম্যাপে দেখুন
-              </Link>
-              <Link
-                to="/add"
-                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-white/55 transition-all duration-200 hover:border-white/25 hover:text-white"
-              >
-                <Plus className="h-4 w-4"/>
-                নতুন হাট
               </Link>
             </motion.div>
           </motion.div>

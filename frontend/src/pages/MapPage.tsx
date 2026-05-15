@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { SEO } from '@/components/common/SEO';
 import type L from 'leaflet';
-import { LocateFixed, MapPin } from 'lucide-react';
+import { LocateFixed, MapPin, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MapView } from '@/components/map/MapView';
 import { MarketFilters } from '@/components/markets/MarketFilters';
@@ -15,12 +15,14 @@ import {
   PRICE_LEVEL_LABEL,
 } from '@/lib/constants';
 import type { PriceLevel } from '@/types';
-import { toBengaliNumerals } from '@/lib/utils';
+import { cn, toBengaliNumerals } from '@/lib/utils';
 
 export default function MapPage() {
   const f = useFilterStore();
   const geo = useGeolocation(true); // request location, but don't auto-center
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const hasActiveFilters = !!(f.division || f.district || f.priceLevel || f.crowdLevel || f.q);
   const mapRef = useRef<L.Map | null>(null);
 
   const { data } = useMarkets({
@@ -64,11 +66,31 @@ export default function MapPage() {
               <MapPin className="h-3 w-3 text-primary" />
               {toBengaliNumerals(count)} হাট
             </span>
+            {/* Mobile-only filter toggle */}
+            <button
+              onClick={() => setFiltersOpen((v) => !v)}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ring-1 backdrop-blur transition-colors sm:hidden',
+                filtersOpen
+                  ? 'bg-primary text-primary-foreground ring-primary'
+                  : cn(
+                      'bg-background/95 ring-border',
+                      hasActiveFilters && 'ring-primary/60 text-primary',
+                    ),
+              )}
+            >
+              <SlidersHorizontal className="h-3 w-3" />
+              ফিল্টার{hasActiveFilters ? ' ●' : ''}
+            </button>
             <span className="hidden text-xs text-muted-foreground sm:inline">
               ম্যাপে ক্লিক করুন বা পিন দেখুন
             </span>
           </div>
-          <div className="rounded-2xl bg-background/95 p-3 shadow-md ring-1 ring-border backdrop-blur">
+          {/* Filter panel: toggle on mobile, always visible on sm+ */}
+          <div className={cn(
+            'rounded-2xl bg-background/95 p-3 shadow-md ring-1 ring-border backdrop-blur',
+            filtersOpen ? '' : 'hidden sm:block',
+          )}>
             <MarketFilters />
           </div>
         </div>

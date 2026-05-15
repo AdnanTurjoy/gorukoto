@@ -20,15 +20,18 @@ export function SEO({ title, description, canonical, ogImage, noIndex, jsonLd }:
   const desc = description ?? DEFAULT_DESCRIPTION;
   const image = ogImage ?? DEFAULT_IMAGE;
   const url = canonical ? `${SITE_URL}${canonical}` : SITE_URL;
+  const robots = noIndex ? 'noindex, nofollow' : 'index, follow';
+  const ldJson = jsonLd
+    ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])
+    : '';
 
   return (
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={desc} />
+      <meta name="robots" content={robots} />
       <link rel="canonical" href={url} />
-      {noIndex && <meta name="robots" content="noindex, nofollow" />}
 
-      {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={desc} />
       <meta property="og:image" content={image} />
@@ -37,18 +40,12 @@ export function SEO({ title, description, canonical, ogImage, noIndex, jsonLd }:
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:locale" content="bn_BD" />
 
-      {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={desc} />
       <meta name="twitter:image" content={image} />
 
-      {/* Structured data */}
-      {jsonLd && (
-        <script type="application/ld+json">
-          {JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
-        </script>
-      )}
+      <script type="application/ld+json">{ldJson}</script>
     </Helmet>
   );
 }
