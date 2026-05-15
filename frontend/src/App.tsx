@@ -14,6 +14,7 @@ const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const AboutPage = lazy(() => import('@/pages/AboutPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
+const GoogleCallbackPage = lazy(() => import('@/pages/GoogleCallbackPage'));
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
             />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
+            <Route path="auth/callback" element={<GoogleCallbackPage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="404" element={<NotFoundPage />} />
             <Route path="*" element={<Navigate to="/404" replace />} />

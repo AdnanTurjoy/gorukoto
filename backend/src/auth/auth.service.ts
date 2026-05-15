@@ -5,6 +5,13 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
+interface GoogleProfile {
+  googleId: string;
+  email: string;
+  name: string;
+  avatarUrl: string | null;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,7 +38,7 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user || !user.passwordHash) throw new UnauthorizedException('Invalid credentials');
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
 
@@ -54,6 +61,65 @@ export class AuthService {
       where: { id: userId },
       select: { id: true, email: true, name: true, phone: true, avatarUrl: true, role: true, createdAt: true },
     });
+  }
+
+  async handleGoogleCallback(code: string) {
+    const apiUrl = process.env.API_URL || 'http://localhost:3000';
+
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID!,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+        redirect_uri: `${apiUrl}/api/auth/google/callback`,
+        grant_type: 'authorization_code',
+      }),
+    });
+    const tokens = await tokenRes.json() as { access_token: string };
+
+    const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
+    });
+    const profile = await userRes.json() as { id: string; email: string; name: string; picture?: string };
+
+    return this.findOrCreateGoogleUser({
+      googleId: profile.id,
+      email: profile.email,
+      name: profile.name,
+      avatarUrl: profile.picture ?? null,
+    });
+  }
+
+  async findOrCreateGoogleUser(profile: GoogleProfile) {
+    const select = { id: true, email: true, name: true, phone: true, avatarUrl: true, role: true, createdAt: true };
+
+    let user = await this.prisma.user.findUnique({ where: { googleId: profile.googleId }, select });
+    if (user) return { user, accessToken: this.sign(user.id, user.email, user.role) };
+
+    if (profile.email) {
+      const byEmail = await this.prisma.user.findUnique({ where: { email: profile.email } });
+      if (byEmail) {
+        user = await this.prisma.user.update({
+          where: { id: byEmail.id },
+          data: { googleId: profile.googleId, avatarUrl: byEmail.avatarUrl ?? profile.avatarUrl },
+          select,
+        });
+        return { user, accessToken: this.sign(user.id, user.email, user.role) };
+      }
+    }
+
+    user = await this.prisma.user.create({
+      data: {
+        googleId: profile.googleId,
+        email: profile.email,
+        name: profile.name,
+        avatarUrl: profile.avatarUrl,
+      },
+      select,
+    });
+    return { user, accessToken: this.sign(user.id, user.email, user.role) };
   }
 
   private sign(sub: string, email: string, role: 'USER' | 'ADMIN') {

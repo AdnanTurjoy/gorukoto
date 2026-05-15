@@ -56,7 +56,8 @@ model User {
   email        String   @unique
   phone        String?  @unique
   name         String
-  passwordHash String
+  passwordHash String?
+  googleId     String?  @unique
   avatarUrl    String?
   role         Role     @default(USER)
   createdAt    DateTime @default(now())
