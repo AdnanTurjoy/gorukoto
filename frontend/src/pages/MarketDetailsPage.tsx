@@ -84,7 +84,7 @@ export default function MarketDetailsPage() {
       latitude: market.lat,
       longitude: market.lng,
     },
-    url: `https://gorukoi.com/markets/${market.id}`,
+    url: `https://gorukoi.vercel.app/markets/${market.id}`,
   };
 
   return (

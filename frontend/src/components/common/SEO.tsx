@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 const SITE_NAME = 'গরুকই';
-const SITE_URL = 'https://gorukoi.com';
+const SITE_URL = 'https://gorukoi.vercel.app';
 const DEFAULT_DESCRIPTION =
   'কোরবানির ঈদে বাংলাদেশের গরুর হাট খুঁজুন — লাইভ দাম, ভিড়ের অবস্থা ও কমিউনিটি আপডেট। GoruKoi — Bangladesh cattle market finder.';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
