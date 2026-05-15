@@ -22,6 +22,18 @@ const HOVER_SHADOW: Record<Market['priceLevel'], string> = {
   EXPENSIVE: '0 14px 36px -6px rgba(220,38,38,0.38)',
 };
 
+const CARD_BG: Record<Market['priceLevel'], string> = {
+  CHEAP:     'bg-emerald-50/60 dark:bg-emerald-950/25',
+  FAIR:      'bg-amber-50/60 dark:bg-amber-950/25',
+  EXPENSIVE: 'bg-rose-50/60 dark:bg-rose-950/25',
+};
+
+const CARD_BORDER: Record<Market['priceLevel'], string> = {
+  CHEAP:     'border-emerald-200/70 dark:border-emerald-800/40',
+  FAIR:      'border-amber-200/70 dark:border-amber-800/40',
+  EXPENSIVE: 'border-red-200/70 dark:border-red-800/40',
+};
+
 const SIZE_LABEL: Record<Market['marketSize'], string> = {
   SMALL: 'ছোট', MEDIUM: 'মাঝারি', LARGE: 'বড়', XLARGE: 'খুব বড়',
 };
@@ -46,7 +58,7 @@ export function MarketCard({ market }: { market: Market }) {
       className="h-full"
     >
       <Link to={`/markets/${market.id}`} className="group block h-full">
-        <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+        <div className={`relative flex h-full flex-col overflow-hidden rounded-2xl border shadow-sm ${CARD_BG[market.priceLevel]} ${CARD_BORDER[market.priceLevel]}`}>
 
           {/* ── Colored header ───────────────────────────── */}
           <div
