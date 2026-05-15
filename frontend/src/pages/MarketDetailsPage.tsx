@@ -26,6 +26,7 @@ import {
 import { formatBdt, priceRange, timeAgoBn, toBengaliNumerals } from '@/lib/utils';
 import { MapView } from '@/components/map/MapView';
 import { SEO } from '@/components/common/SEO';
+import { ShareBar } from '@/components/common/ShareBar';
 import { PriceUpdateForm } from '@/components/markets/PriceUpdateForm';
 import { PurchaseList } from '@/components/markets/PurchaseList';
 import { PurchaseForm } from '@/components/markets/PurchaseForm';
@@ -165,6 +166,15 @@ export default function MarketDetailsPage() {
             <Badge variant="outline">
               আকার: {MARKET_SIZE_LABEL[market.marketSize]}
             </Badge>
+          </div>
+
+          {/* Share */}
+          <div className="mt-4">
+            <ShareBar
+              url={`${window.location.origin}/markets/${market.id}`}
+              title={`${market.name} — গরুর হাট | GoruKoi`}
+              summary={`${market.area}, ${market.district} | ${PRICE_LEVEL_LABEL[market.priceLevel]} দাম | কোরবানির ঈদে সেরা হাট খুঁজুন GoruKoi-তে।`}
+            />
           </div>
 
           {/* Stat tiles */}
